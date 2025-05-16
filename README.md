@@ -10,7 +10,7 @@ Really the easiest way is to install it as a vscode extension. Even if you don't
 
 ## Hardware Requirements
 
-- 3D printer parts (get them from [printables](https://www.printables.com/model/1297820-grafana-grot-button-iot-button)
+- 3D printed parts (get them from [printables](https://www.printables.com/model/1297820-grafana-grot-button-iot-button)
 - ESP32-C3 Super Mini (Get it from Aliexpress. Usually less than 2€)
 - Cherry MX switch or clone. (You can find clones in Aliexpress for as little as 10 units for 2€.)
 - Soldering supplies
