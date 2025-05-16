@@ -126,3 +126,6 @@ To change the webhook URL or wifi credentials:
 * Configure the [infinity datasource](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) in your grafana instance to read from your webhook-test.com account
 * Plot away!
 
+### Alternative
+ 
+* Open a PR adding POST support and connect it to [Grafana incidents?](https://grafana.com/docs/grafana-cloud/alerting-and-irm/irm/configure/integrations/webhooks/incoming-webhooks/incident-webhooks/)
