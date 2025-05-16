@@ -1,0 +1,33 @@
+Processing esp32-c3-devkitm-1 (platform: espressif32; board: esp32-c3-devkitm-1; framework: arduino)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-c3-devkitm-1.html
+PLATFORM: Espressif 32 (6.10.0) > Espressif ESP32-C3-DevKitM-1
+HARDWARE: ESP32C3 160MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-builtin, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20017.241212+sha.dcc1105b 
+ - tool-esptoolpy @ 1.40501.0 (4.5.1) 
+ - toolchain-riscv32-esp @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 35 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- ESP32C3 BLE Keyboard @ 0.3.3+sha.21ea3a8
+|-- NimBLE-Arduino @ 2.2.3
+Building in release mode
+Compiling .pio/build/esp32-c3-devkitm-1/src/main.cpp.o
+In file included from src/main.cpp:13:
+.pio/libdeps/esp32-c3-devkitm-1/ESP32C3 BLE Keyboard/BleKeyboard.h:178:16: error: 'virtual void BleKeyboard::onConnect(NimBLEServer*)' marked 'override', but does not override
+   virtual void onConnect(BLEServer* pServer) override;
+                ^~~~~~~~~
+.pio/libdeps/esp32-c3-devkitm-1/ESP32C3 BLE Keyboard/BleKeyboard.h:179:16: error: 'virtual void BleKeyboard::onDisconnect(NimBLEServer*)' marked 'override', but does not override
+   virtual void onDisconnect(BLEServer* pServer) override;
+                ^~~~~~~~~~~~
+.pio/libdeps/esp32-c3-devkitm-1/ESP32C3 BLE Keyboard/BleKeyboard.h:180:16: error: 'virtual void BleKeyboard::onWrite(NimBLECharacteristic*)' marked 'override', but does not override
+   virtual void onWrite(BLECharacteristic* me) override;
+                ^~~~~~~
+Compiling .pio/build/esp32-c3-devkitm-1/libf90/NimBLE-Arduino/NimBLEScan.cpp.o
+*** [.pio/build/esp32-c3-devkitm-1/src/main.cpp.o] Error 1
+========================== [FAILED] Took 1.33 seconds ==========================
