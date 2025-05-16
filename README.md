@@ -1,5 +1,8 @@
 # Grot Bot Button
 
+![image](https://github.com/user-attachments/assets/6e0f7b63-a4a8-4458-9a7a-c8dd2a16f3c4)
+
+
 This is an IoT button in the shape of the Grafana mascot Grot that can trigger webhook requests when pressed.
 
 ## Software Requirements
@@ -29,27 +32,37 @@ I recommend you to burn the firmware before you assemble the button so you can t
 
 ## Assembly instructions
 
-1. Insert the switch inside the grot bottom part 
-![image](https://github.com/user-attachments/assets/3097e428-2d80-43dd-b844-9bf9f63a7e85)
+1. Insert the switch inside the grot bottom part
 
-2. Cut two small jumper wire pieces of approximately 3cm each, and strip the insulation from the ends (about 5mm from each end)
+| ![image](https://github.com/user-attachments/assets/94e51ea0-0715-4f64-a787-8cabbb2c815b) | ![image](https://github.com/user-attachments/assets/acaf4814-3f49-4a78-b822-a846c7f5cdb7) |
+|---|---|
+   
+3. Cut two small jumper wire pieces of approximately 3cm each, and strip the insulation from the ends (about 5mm from each end)
 
-3. Solder one wire to each leg of the switch (DO NOT solder to the chip yet)
+4. Solder one wire to each leg of the switch (DO NOT solder to the chip yet)
 
-4. Glue the housing to the bottom grot part. Pass the wires through the holes in the housing.
+5. Glue the housing to the bottom grot part. Pass the wires through the holes in the housing.
 
    > After this step you will have two wires sticking out of the housing
+![image](https://github.com/user-attachments/assets/2c4e9f2f-3737-4b94-8e1a-2d6951d1e62e)
 
-5. Solder the wires to the ESP32 chip. (Keep an eye on the chip orientation. The USB port should point to the housing USB hole)
+
+6. Solder the wires to the ESP32 chip. (Keep an eye on the chip orientation. The USB port should point to the housing USB hole)
     * One wire to the G pin (ground)
     * The other wire to the 2 pin (button pin)
     * > NOTE: It doesn't matter which wire connects to which pin
 
-6. Adjust the chip so its usb port is in the housing usb hole
+7. Adjust the chip so its usb port is in the housing usb hole
 
-7. Glue the housing lid to the housing (Do not glue the housing to the chip, glue the 3D printed parts)
 
-8. Fix the Grot Top Part to the switch by applying pressure onto the switch until it is pressed and stays in place. 
+| ![image](https://github.com/user-attachments/assets/317985f8-51fe-4a14-a6e3-b7d150e5029b) | ![image](https://github.com/user-attachments/assets/e656e9c1-7d11-41b8-9404-16c3fff2eafc) |
+|---|---|
+   
+
+
+9. Glue the housing lid to the housing (Do not glue the housing to the chip, glue the 3D printed parts)
+
+10. Fix the Grot Top Part to the switch by applying pressure onto the switch until it is pressed and stays in place. 
 
 ## How to use?
 
