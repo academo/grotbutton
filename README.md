@@ -77,7 +77,7 @@ Once you are in the web interface, you can configure the button with your WiFi c
 
 Upon saving the configuration, the button will reboot and try to connect to your WiFi network.
 
-If it fails to connect to your WiFi network, it will retry every 10 seconds for a total of 10 attempts. If all attempts fail, it will go back to AP mode and wait for you to configure it again.
+If it fails to connect to your WiFi network, it will retry for the next 30 seconds. If all attempts fail, it will go back to AP mode and wait for you to configure it again.
 
 
 ### Normal operation
@@ -97,3 +97,32 @@ To change the webhook URL or wifi credentials:
 * Keep the button pressed while you plug it back
 * Make sure to keep the button pressed for at least 5 seconds while it boots up
 * The button will start in AP mode and you can configure it again by connecting to it with your phone or computer
+
+## Troubleshooting
+
+### Button doesn't connect to the wifi and goes back to AP mode every time
+
+* Make sure the wifi credentials are correct
+* Did you set `USE_LOWER_WIFI_POWER` to 0? If so, try setting it to 1
+* Is your wifi signal too weak? Try setting `USE_LOWER_WIFI_POWER` to 0 (if you have the "good" chip)
+* The esp32 c3 super mini is a very small chip. If your wifi signal is too weak it might just not connect to it at all.
+
+### The button is connected to wifi (not in AP mode) but the request doesn't reach the webhook
+
+* Make sure the webhook URL is correct
+* Make sure the webhook URL is a GET request (no POST supported yet)
+* Maybe try a webhook-test website such as: [webhook-test.com](https://webhook-test.com/)
+
+### I connect to the AP but it doesn't show the captive portal
+
+* You might get the "sign in" notification on your phone or computer. Try tapping it.
+* If it doesn't work, try opening the web interface at `http://192.168.4.1` (in any browser)
+* Check if your phone is actually connected to the AP. Some phones will automatically disconnect from a wifi network if there's no internet.
+
+## But, how do I connect it to Grafana?
+
+* Register an account in [https://webhook-test.com/](https://webhook-test.com/)
+* Get a webhook URL from the "Webhooks" tab and set it in your button's configuration
+* Configure the [infinity datasource](https://grafana.com/grafana/plugins/yesoreyeram-infinity-datasource/) in your grafana instance to read from your webhook-test.com account
+* Plot away!
+
