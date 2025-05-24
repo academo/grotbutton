@@ -585,7 +585,7 @@ void sendWebhookRequest() {
                 key.trim();
                 value.trim();
                 http.addHeader(key, value);
-                Serial.println("Added header: " + key + ": " + value);
+                Serial.println("Added header: " + key);
             }
         }
         lineStart = lineEnd + 1;

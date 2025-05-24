@@ -98,6 +98,14 @@ To change the webhook URL or wifi credentials:
 * Make sure to keep the button pressed for at least 5 seconds while it boots up
 * The button will start in AP mode and you can configure it again by connecting to it with your phone or computer
 
+### Authenticated webhooks
+
+You can set headers in the configuration form. If your endpoint requires authentication you can add a header for it. e.g:
+
+
+> [!CAUTION]
+> All form information is stored in plain text. Someone with physical access to your button could read it.
+
 ## Troubleshooting
 
 ### Button doesn't connect to the wifi and goes back to AP mode every time
@@ -110,7 +118,7 @@ To change the webhook URL or wifi credentials:
 ### The button is connected to wifi (not in AP mode) but the request doesn't reach the webhook
 
 * Make sure the webhook URL is correct
-* Make sure the webhook URL is a GET request (no POST supported yet)
+* Try first with a GET request only
 * Maybe try a webhook-test website such as: [webhook-test.com](https://webhook-test.com/)
 
 ### I connect to the AP but it doesn't show the captive portal
@@ -128,4 +136,4 @@ To change the webhook URL or wifi credentials:
 
 ### Alternative
  
-* Open a PR adding POST support and connect it to [Grafana incidents?](https://grafana.com/docs/grafana-cloud/alerting-and-irm/irm/configure/integrations/webhooks/incoming-webhooks/incident-webhooks/)
+* Use a POST request and connect it to [Grafana incidents?](https://grafana.com/docs/grafana-cloud/alerting-and-irm/irm/configure/integrations/webhooks/incoming-webhooks/incident-webhooks/)
