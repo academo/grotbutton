@@ -58,6 +58,9 @@ Preferences preferences;
 String ssid = "";
 String password = "";
 String webhookUrl = "";
+String webhookMethod = "GET";
+String webhookHeaders = "";
+String webhookPayload = "";
 bool configSaved = false;
 volatile int pendingRequests = 0;
 bool requestInProgress = false;
@@ -159,6 +162,9 @@ void setup() {
   ssid = preferences.getString("ssid", "");
   password = preferences.getString("password", "");
   webhookUrl = preferences.getString("webhook", "");
+  webhookMethod = preferences.getString("webhook_method", "GET");
+  webhookHeaders = preferences.getString("webhook_headers", "");
+  webhookPayload = preferences.getString("webhook_payload", "");
   
   // Trim whitespace from credentials to prevent connection issues
   ssid.trim();
@@ -397,23 +403,23 @@ void setupWebServer() {
 void handleRoot() {
   // Update activity time when user accesses the configuration page
   lastActivityTime = millis();
-  String html = "<!DOCTYPE html>"
-                "<html>"
-                "<head>"
-                "<title>GrotBot Configuration</title>"
+  String html = "<html><head><title>GrotBot Configuration</title>"
                 "<meta name='viewport' content='width=device-width, initial-scale=1'>"
                 "<style>"
-                "body { font-family: Arial, sans-serif; margin: 20px; }"
-                "h1 { color: #333; }"
+                "body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }"
+                "h1 { color: #333; text-align: center; }"
+                "h2 { color: #444; border-bottom: 1px solid #eee; padding-bottom: 10px; }"
                 ".form-group { margin-bottom: 15px; }"
-                "label { display: block; margin-bottom: 5px; }"
-                "input[type='text'], input[type='password'] { width: 100%; padding: 8px; box-sizing: border-box; }"
-                "button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }"
-                "</style>"
-                "</head>"
-                "<body>"
-                "<h1>GrotBot Configuration</h1>"
+                "label { display: block; margin-bottom: 5px; font-weight: bold; }"
+                "input[type='text'], input[type='password'], select, textarea { width: 100%; padding: 8px; box-sizing: border-box; margin-bottom: 10px; }"
+                "button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; width: 100%; font-size: 16px; }"
+                ".form-section { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; }"
+                "small { display: block; margin-top: 5px; color: #666; font-size: 0.9em; }"
+                "</style></head>"
+                "<body><h1>GrotBot Configuration</h1>"
                 "<form action='/save' method='post'>"
+                
+                "<div class='form-section'><h2>WiFi Settings</h2>"
                 "<div class='form-group'>"
                 "<label for='ssid'>WiFi SSID:</label>"
                 "<input type='text' id='ssid' name='ssid' value='" + ssid + "' required>"
@@ -421,16 +427,37 @@ void handleRoot() {
                 "<div class='form-group'>"
                 "<label for='password'>WiFi Password:</label>"
                 "<input type='text' id='password' name='password' value='" + password + "' required>"
-                "<small style='display: block; margin-top: 5px; color: #666;'>Make sure there are no extra spaces in your password</small>"
-                "</div>"
+                "<small>Make sure there are no extra spaces in your password</small>"
+                "</div></div>"
+                
+                "<div class='form-section'><h2>Webhook Settings</h2>"
                 "<div class='form-group'>"
                 "<label for='webhook'>Webhook URL:</label>"
                 "<input type='text' id='webhook' name='webhook' value='" + webhookUrl + "' required>"
                 "</div>"
+                
+                "<div class='form-group'>"
+                "<label for='webhook_method'>HTTP Method:</label>"
+                "<select id='webhook_method' name='webhook_method'>"
+                "<option value='GET'" + (webhookMethod == "GET" ? " selected" : "") + ">GET</option>"
+                "<option value='POST'" + (webhookMethod == "POST" ? " selected" : "") + ">POST</option>"
+                "</select>"
+                "</div>"
+                
+                "<div class='form-group'>"
+                "<label for='webhook_headers'>Headers (one per line):</label>"
+                "<textarea id='webhook_headers' name='webhook_headers' rows='4'>" + webhookHeaders + "</textarea>"
+                "<small>Example: Content-Type: application/json</small>"
+                "</div>"
+                
+                "<div class='form-group'>"
+                "<label for='webhook_payload'>Request Payload (for POST requests):</label>"
+                "<textarea id='webhook_payload' name='webhook_payload' rows='4'>" + webhookPayload + "</textarea>"
+                "<small>For JSON, use regular quotes (no escape characters)</small>"
+                "</div></div>"
+                
                 "<button type='submit'>Save and Connect</button>"
-                "</form>"
-                "</body>"
-                "</html>";
+                "</form></body></html>";
   
   server.send(200, "text/html", html);
 }
@@ -444,11 +471,17 @@ void handleSave() {
     ssid = server.arg("ssid");
     password = server.arg("password");
     webhookUrl = server.arg("webhook");
+    webhookMethod = server.arg("webhook_method");
+    webhookHeaders = server.arg("webhook_headers");
+    webhookPayload = server.arg("webhook_payload");
     
     // Trim whitespace from beginning and end of credentials
     ssid.trim();
     password.trim();
     webhookUrl.trim();
+    webhookMethod.trim();
+    webhookHeaders.trim();
+    webhookPayload.trim();
     
     Serial.println("Trimmed credentials to remove any extra spaces:");
     Serial.println("SSID length: " + String(ssid.length()));
@@ -458,6 +491,9 @@ void handleSave() {
     preferences.putString("ssid", ssid);
     preferences.putString("password", password);
     preferences.putString("webhook", webhookUrl);
+    preferences.putString("webhook_method", webhookMethod);
+    preferences.putString("webhook_headers", webhookHeaders);
+    preferences.putString("webhook_payload", webhookPayload);
     
     Serial.println("New configuration saved:");
     Serial.println("SSID: " + ssid);
@@ -485,6 +521,36 @@ void handleSave() {
   } else {
     server.send(400, "text/plain", "Missing required fields");
   }
+}
+
+// Helper function to escape JSON strings
+String escapeJsonString(const String& input) {
+    String output;
+    output.reserve(input.length() * 1.1); // Reserve some extra space for escape characters
+    
+    for (size_t i = 0; i < input.length(); i++) {
+        char c = input.charAt(i);
+        switch (c) {
+            case '\\': output += "\\\\"; break;
+            case '\"': output += "\\\""; break;
+            case '\b': output += "\\b"; break;
+            case '\f': output += "\\f"; break;
+            case '\n': output += "\\n"; break;
+            case '\r': output += "\\r"; break;
+            case '\t': output += "\\t"; break;
+            default:
+                if (c >= ' ' && c <= '~') {
+                    output += c;
+                } else {
+                    // Convert to \uXXXX for non-printable characters
+                    char buf[7];
+                    snprintf(buf, sizeof(buf), "\\u%04x", (unsigned char)c);
+                    output += buf;
+                }
+        }
+    }
+    
+    return output;
 }
 
 void sendWebhookRequest() {
