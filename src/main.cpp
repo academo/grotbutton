@@ -556,36 +556,66 @@ String escapeJsonString(const String& input) {
 void sendWebhookRequest() {
     requestInProgress = true;
     lastActivityTime = millis();
-  
-    if (webhookUrl.length() == 0) {
-      Serial.println("Webhook URL not set, skipping request");
-      requestInProgress = false;
-      // Update activity time even if we skip the request
-      return;
-    }
-    
-    HTTPClient http;
-    
-    Serial.println("Sending GET request to: " + webhookUrl);
-    
-    http.begin(webhookUrl);
-    
-    int httpResponseCode = http.GET();
-    
-    if (httpResponseCode > 0) {
-      String response = http.getString();
-      Serial.println("HTTP Response code: " + String(httpResponseCode));
-      Serial.println("Response: " + response);
-    } else {
-      Serial.println("Error on HTTP request. Error code: " + String(httpResponseCode));
-    }
-    
-    http.end();
 
-    // Update activity time after request completes
+    if (webhookUrl.length() == 0) {
+        Serial.println("Webhook URL not set, skipping request");
+        requestInProgress = false;
+        return;
+    }
+
+    HTTPClient http;
+    Serial.println("Preparing to send request to: " + webhookUrl);
+    // Use WiFiClientSecure for HTTPS and set insecure mode for testing
+    WiFiClientSecure client;
+    client.setInsecure(); // disables certificate validation (for testing)
+    http.begin(client, webhookUrl);
+
+    // Parse headers from free text (one per line, Header: Value)
+    int lineStart = 0;
+    while (lineStart < webhookHeaders.length()) {
+        int lineEnd = webhookHeaders.indexOf('\n', lineStart);
+        if (lineEnd == -1) lineEnd = webhookHeaders.length();
+        String line = webhookHeaders.substring(lineStart, lineEnd);
+        line.trim();
+        if (line.length() > 0) {
+            int colon = line.indexOf(':');
+            if (colon > 0) {
+                String key = line.substring(0, colon);
+                String value = line.substring(colon + 1);
+                key.trim();
+                value.trim();
+                http.addHeader(key, value);
+                Serial.println("Added header: " + key + ": " + value);
+            }
+        }
+        lineStart = lineEnd + 1;
+    }
+
+    int httpResponseCode = -1;
+    String response;
+    if (webhookMethod.equalsIgnoreCase("POST")) {
+        // Only send payload for POST
+        String payload = webhookPayload;
+        Serial.println("Sending POST request with payload: " + payload);
+        httpResponseCode = http.POST(payload);
+    } else {
+        Serial.println("Sending GET request");
+        httpResponseCode = http.GET();
+    }
+
+    if (httpResponseCode > 0) {
+        response = http.getString();
+        Serial.println("HTTP Response code: " + String(httpResponseCode));
+        Serial.println("Response: " + response);
+    } else {
+        Serial.println("Error on HTTP request. Error code: " + String(httpResponseCode));
+    }
+
+    http.end();
     lastActivityTime = millis();
     requestInProgress = false;
 }
+
 
 void goToSleep() {
   Serial.println("Going to deep sleep. Can be woken by button press only");
