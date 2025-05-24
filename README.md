@@ -100,7 +100,11 @@ To change the webhook URL or wifi credentials:
 
 ### Authenticated webhooks
 
-You can set headers in the configuration form. If your endpoint requires authentication you can add a header for it. e.g:
+You can set headers in the configuration form. If your endpoint requires authentication you can add a header for it. e.g: (for username:password)
+
+```
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
+```
 
 
 > [!CAUTION]
